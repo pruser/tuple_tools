@@ -23,16 +23,11 @@ namespace tuple_tools {
         return std::index_sequence<I1..., I2...>();
     }
 
-    template <typename... T, std::size_t... I1, std::size_t... I2>
-    auto constexpr _partition_impl(std::tuple<T...> t, std::index_sequence<I1...>, std::index_sequence<I2...>) {
-        return std::make_pair(std::make_tuple(std::get<I1>(t)...), std::make_tuple(std::get<I2>(t)...));
-    }
-
     template <std::size_t P, typename... T>
     auto constexpr partition(std::tuple<T...> t) {
         static_assert(P >= 0, "");
         static_assert(P <= sizeof...(T), "");
-        return _partition_impl(t, create_index_sequence<0, P>(), create_index_sequence<P, sizeof...(T)>());
+        return std::make_pair(get_items(t, create_index_sequence<0, P>()), get_items(t, create_index_sequence<P, sizeof...(T)>()));
     }
 
     template <std::size_t B, std::size_t E, typename... T>
