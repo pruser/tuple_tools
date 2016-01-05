@@ -1,5 +1,12 @@
 #include "tuple_tools.hpp"
 
+struct MapExampleFunction {
+    template <typename T>
+    static constexpr auto call(T t) {
+        return t * 2;
+    }
+};
+
 int main()
 {
     {
@@ -28,6 +35,11 @@ int main()
         static_assert(tr1 == std::make_tuple(1, 9, 9, 4), "");
         constexpr auto tr2 = tuple_tools::replace<3>(std::make_tuple(1, 2, 3, 4), std::make_tuple(9, 9));
         static_assert(tr2 == std::make_tuple(1, 2, 3, 9, 9), "");
+    }
+
+    {
+        constexpr auto tr1 = tuple_tools::map<MapExampleFunction>(std::make_tuple(1, 2.0f, 3, 4.0));
+        static_assert(tr1 == std::make_tuple(2, 4.0f, 6, 8.0), "");
     }
     return 0;
 }

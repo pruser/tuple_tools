@@ -63,10 +63,20 @@ namespace tuple_tools {
     }
 
      template <std::size_t P, typename... T, typename... T1>
-     auto constexpr replace(std::tuple<T...> t, std::tuple<T1...> t1) {
+     constexpr auto replace(std::tuple<T...> t, std::tuple<T1...> t1) {
          static_assert(P >= 0, "");
          static_assert(P <= sizeof...(T), "");
          return _replace_impl<P>(t, t1);
+     }
+
+     template <typename F, typename... T, std::size_t... I>
+     auto constexpr map_impl(std::tuple<T...> t, std::index_sequence<I...>) {
+         return std::make_tuple(F::call(std::get<I>(t))...);
+     }
+
+     template <typename F, typename... T>
+     constexpr auto map(std::tuple<T...> t) {
+         return map_impl<F>(t, std::make_index_sequence<sizeof...(T)>());
      }
 }
 
