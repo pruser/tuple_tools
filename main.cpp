@@ -7,6 +7,16 @@ struct MapExampleFunction {
     }
 };
 
+struct FilterExampleFunction {
+    template <typename T>
+    static constexpr auto call(T) {
+        return std::true_type();
+    }
+    static constexpr auto call(int) {
+        return std::false_type();
+    }
+};
+
 int main()
 {
     {
@@ -38,8 +48,13 @@ int main()
     }
 
     {
-        constexpr auto tr1 = tuple_tools::map<MapExampleFunction>(std::make_tuple(1, 2.0f, 3, 4.0));
-        static_assert(tr1 == std::make_tuple(2, 4.0f, 6, 8.0), "");
+        constexpr auto tm = tuple_tools::map<MapExampleFunction>(std::make_tuple(1, 2.0f, 3, 4.0));
+        static_assert(tm == std::make_tuple(2, 4.0f, 6, 8.0), "");
+    }
+
+    {
+        constexpr auto tf = tuple_tools::filter<FilterExampleFunction>(std::make_tuple(1.0, 2, 3.0, 4));
+        static_assert(tf == std::make_tuple(1.0, 3.0), "");
     }
     return 0;
 }
