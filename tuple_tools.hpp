@@ -79,21 +79,21 @@ namespace tuple_tools {
          return map_impl<F>(t, std::make_index_sequence<sizeof...(T)>());
      }
 
-     template<typename... T1, typename... T2>
-     static constexpr auto _tuple_cat_conditional(std::true_type, std::tuple<T1...> t1, std::tuple<T2...> t2) {
-         return std::tuple_cat(t1, t2);
+     template<typename T1, typename T2>
+     static constexpr auto _if(std::true_type, T1 trueValue, T2 falseValue) {
+         return trueValue;
      }
 
-     template<typename... T1, typename... T2>
-     static constexpr auto _tuple_cat_conditional(std::false_type, std::tuple<T1...> t1, std::tuple<T2...> t2) {
-         return t1;
+     template<typename T1, typename T2>
+     static constexpr auto _if(std::false_type, T1 trueValue, T2 falseValue) {
+         return falseValue;
      }
 
      template <typename F, std::size_t I, std::size_t M>
      struct _Filter_impl {
         template <typename... T, typename... R>
         static constexpr auto filter(std::tuple<T...> t, std::tuple<R...> result) {
-            return _Filter_impl<F, I + 1, M>::filter(t, _tuple_cat_conditional(F::call(std::get<I>(t)), result, std::make_tuple(std::get<I>(t))));
+            return _Filter_impl<F, I + 1, M>::filter(t, _if(F::call(std::get<I>(t)), std::tuple_cat(result, std::make_tuple(std::get<I>(t))), result));
         }
      };
      
